@@ -119,12 +119,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return result[1]
 
     def get_value(self, gameState, index, depth):
-        """
-        Returns value as pair of [score, action] based on the different cases:
-        1. Terminal state
-        2. Max-agent
-        3. Min-agent
-        """
+
         # Terminal states:
         if gameState.isWin() or gameState.isLose() or depth == self.depth:
             return gameState.getScore(), ""
@@ -138,9 +133,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             return self.min_value(gameState, index, depth)
 
     def max_value(self, gameState, index, depth):
-        """
-        Returns the max utility value-action for max-agent
-        """
+ 
         legalMoves = gameState.getLegalActions(index)
         max_value = float("-inf")
         max_action = ""
@@ -164,9 +157,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return max_value, max_action
 
     def min_value(self, gameState, index, depth):
-        """
-        Returns the min utility value-action for min-agent
-        """
+        
         legalMoves = gameState.getLegalActions(index)
         min_value = float("inf")
         min_action = ""
