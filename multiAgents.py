@@ -146,7 +146,13 @@ class MinimaxAgent(MultiAgentSearchAgent):
             else:
                 return get_min(index, depth, gameState)
          def get_max(self, index, depth, gameState):
-            
+             for action in gameState.getLegalActions(index):
+                 successor = gameState.generateSuccessor(index, action)
+                 successor_index += 1
+                 successor_depth = depth
+             if successor_index == gameState.getNumAgents():
+                successor_index = 0
+                successor_depth += 1
 
          def get_min(self, index, depth, gameState):
             
