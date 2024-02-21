@@ -153,9 +153,27 @@ class MinimaxAgent(MultiAgentSearchAgent):
              if successor_index == gameState.getNumAgents():
                 successor_index = 0
                 successor_depth += 1
+             max = float("inf")    
+             current = self.get_value(successor, successor_index, successor_depth)[0]
+             if current > max:
+                max = current
+                max_action = action
+         return max, max_action 
 
          def get_min(self, index, depth, gameState):
-            
+            for action in gameState.getLegalActions(index):
+                 successor = gameState.generateSuccessor(index, action)
+                 successor_index += 1
+                 successor_depth = depth
+             if successor_index == gameState.getNumAgents():
+                successor_index = 0
+                successor_depth += 1
+             min = float("-inf")    
+             current = self.get_value(successor, successor_index, successor_depth)[0]
+             if current < min:
+                min = current
+                min_action = action
+         return min, min_action           
                 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
