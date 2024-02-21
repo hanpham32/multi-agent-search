@@ -174,7 +174,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             current = self.get_value(successor, successor_index, successor_depth)[0]
 
-            if current_val < min_val:
+            if current < min_val:
                 min_val = current
                 min_action = action
 
