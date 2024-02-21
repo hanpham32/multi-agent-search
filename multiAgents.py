@@ -120,22 +120,22 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     def get_value(self, gameState, index, depth):
 
-        # Terminal states:
+        # if Terminal states return scores, action:
         if gameState.isWin() or gameState.isLose() or depth == self.depth:
             return gameState.getScore(), ""
 
         # Max-agent: Pacman has index = 0
         if index == 0:
-            return self.max_value(gameState, index, depth)
+            return self.get_max(gameState, index, depth)
 
         # Min-agent: Ghost has index > 0
         else:
-            return self.min_value(gameState, index, depth)
+            return self.get_min(gameState, index, depth)
 
-    def max_value(self, gameState, index, depth):
+    def get_max(self, gameState, index, depth):
  
         legalMoves = gameState.getLegalActions(index)
-        max_value = float("-inf")
+        max_val = float("-inf")
         max_action = ""
 
         for action in legalMoves:
@@ -148,18 +148,18 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 successor_index = 0
                 successor_depth += 1
 
-            current_value = self.get_value(successor, successor_index, successor_depth)[0]
+            current = self.get_value(successor, successor_index, successor_depth)[0]
 
-            if current_value > max_value:
-                max_value = current_value
+            if current > max_val:
+                max_val = current
                 max_action = action
 
-        return max_value, max_action
+        return max_val, max_action
 
-    def min_value(self, gameState, index, depth):
+    def get_min(self, gameState, index, depth):
         
         legalMoves = gameState.getLegalActions(index)
-        min_value = float("inf")
+        min_val = float("inf")
         min_action = ""
 
         for action in legalMoves:
@@ -172,13 +172,13 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 successor_index = 0
                 successor_depth += 1
 
-            current_value = self.get_value(successor, successor_index, successor_depth)[0]
+            current = self.get_value(successor, successor_index, successor_depth)[0]
 
-            if current_value < min_value:
-                min_value = current_value
+            if current_val < min_val:
+                min_val = current
                 min_action = action
 
-        return min_value, min_action
+        return min_val, min_action
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
