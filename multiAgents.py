@@ -85,27 +85,6 @@ def scoreEvaluationFunction(currentGameState):
     (not reflex agents).
     """
     return currentGameState.getScore()
-
-class MultiAgentSearchAgent(Agent):
-    """
-    This class provides some common elements to all of your
-    multi-agent searchers.  Any methods defined here will be available
-    to the MinimaxPacmanAgent, AlphaBetaPacmanAgent & ExpectimaxPacmanAgent.
-
-    You *do not* need to make any changes here, but you can if you want to
-    add functionality to all your adversarial search agents.  Please do not
-    remove anything, however.
-
-    Note: this is an abstract class: one that should not be instantiated.  It's
-    only partially specified, and designed to be extended.  Agent (game.py)
-    is another abstract class.
-    """
-
-    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
-        self.index = 0 # Pacman is always agent index 0
-        self.evaluationFunction = util.lookup(evalFn, globals())
-        self.depth = int(depth)
-
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
@@ -116,7 +95,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns the minimax action from the current gameState using self.depth
         and self.evaluationFunction.
 
-        Here are some method calls that might be useful when implementing minimax.
+        Here are some method calls that might be useful when implementing minimax:
 
         gameState.getLegalActions(agentIndex):
         Returns a list of legal actions for an agent
@@ -134,47 +113,82 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"
-        minimax_action = self.get_value(gameState, 0, 0)
-        return minimax_action[1]  # Return the action from minimax_action 
-        
-        def get_value(self, index, depth, gameState):
-            if gameState.getNumAgents() == 0 or not gameState.getLegalActions(index) or depth == self.depth:
-                return currentGameState.getScore(), ""
-            if index == 0:
-                return get_max(index, depth, gameState)
-            else:
-                return get_min(index, depth, gameState)
-         def get_max(self, index, depth, gameState):
-             for action in gameState.getLegalActions(index):
-                 successor = gameState.generateSuccessor(index, action)
-                 successor_index += 1
-                 successor_depth = depth
-             if successor_index == gameState.getNumAgents():
-                successor_index = 0
-                successor_depth += 1
-             max = float("inf")    
-             current = self.get_value(successor, successor_index, successor_depth)[0]
-             if current > max:
-                max = current
-                max_action = action
-         return max, max_action 
+        result = self.get_value(gameState, 0, 0)
 
-         def get_min(self, index, depth, gameState):
-            for action in gameState.getLegalActions(index):
-                 successor = gameState.generateSuccessor(index, action)
-                 successor_index += 1
-                 successor_depth = depth
-             if successor_index == gameState.getNumAgents():
+        # Return the action from result
+        return result[1]
+
+    def get_value(self, gameState, index, depth):
+        """
+        Returns value as pair of [score, action] based on the different cases:
+        1. Terminal state
+        2. Max-agent
+        3. Min-agent
+        """
+        # Terminal states:
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return gameState.getScore(), ""
+
+        # Max-agent: Pacman has index = 0
+        if index == 0:
+            return self.max_value(gameState, index, depth)
+
+        # Min-agent: Ghost has index > 0
+        else:
+            return self.min_value(gameState, index, depth)
+
+    def max_value(self, gameState, index, depth):
+        """
+        Returns the max utility value-action for max-agent
+        """
+        legalMoves = gameState.getLegalActions(index)
+        max_value = float("-inf")
+        max_action = ""
+
+        for action in legalMoves:
+            successor = gameState.generateSuccessor(index, action)
+            successor_index = index + 1
+            successor_depth = depth
+
+            # Update the successor agent's index and depth if it's pacman
+            if successor_index == gameState.getNumAgents():
                 successor_index = 0
                 successor_depth += 1
-             min = float("-inf")    
-             current = self.get_value(successor, successor_index, successor_depth)[0]
-             if current < min:
-                min = current
+
+            current_value = self.get_value(successor, successor_index, successor_depth)[0]
+
+            if current_value > max_value:
+                max_value = current_value
+                max_action = action
+
+        return max_value, max_action
+
+    def min_value(self, gameState, index, depth):
+        """
+        Returns the min utility value-action for min-agent
+        """
+        legalMoves = gameState.getLegalActions(index)
+        min_value = float("inf")
+        min_action = ""
+
+        for action in legalMoves:
+            successor = gameState.generateSuccessor(index, action)
+            successor_index = index + 1
+            successor_depth = depth
+
+            # Update the successor agent's index and depth if it's pacman
+            if successor_index == gameState.getNumAgents():
+                successor_index = 0
+                successor_depth += 1
+
+            current_value = self.get_value(successor, successor_index, successor_depth)[0]
+
+            if current_value < min_value:
+                min_value = current_value
                 min_action = action
-         return min, min_action           
-                
+
+        return min_value, min_action
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
