@@ -141,6 +141,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (question 3)
     """
     def __init__(self):
+        super().__init__()
         self.alpha = float("-inf")
         self.beta = float("inf")
         
