@@ -177,7 +177,73 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        result = self.get_value(gameState, 0, 0)
+
+        # Return the action from result
+        return result[1]
+
+    def get_value(self, gameState, index, depth):
+
+        # if Terminal states return scores, action:
+        if gameState.isWin() or gameState.isLose() or depth == self.depth:
+            return gameState.getScore(), ""
+
+        # Max-agent: Pacman has index = 0
+        if index == 0:
+            return self.get_max(gameState, index, depth)
+
+        # Min-agent: Ghost has index > 0
+        else:
+            return self.get_min(gameState, index, depth)
+
+    def get_max(self, gameState, index, depth):
+ 
+        legalMoves = gameState.getLegalActions(index)
+        max_val = float("-inf")
+        max_action = ""
+
+        for action in legalMoves:
+            successor = gameState.generateSuccessor(index, action)
+            successor_index = index + 1
+            successor_depth = depth
+
+            # Update the successor agent's index and depth if it's pacman
+            if successor_index == gameState.getNumAgents():
+                successor_index = 0
+                successor_depth += 1
+
+            current = self.get_value(successor, successor_index, successor_depth)[0]
+
+            if current > max_val:
+                max_val = current
+                max_action = action
+
+        return max_val, max_action
+
+    def get_min(self, gameState, index, depth):
+        
+        legalMoves = gameState.getLegalActions(index)
+        min_val = float("inf")
+        min_action = ""
+
+        for action in legalMoves:
+            successor = gameState.generateSuccessor(index, action)
+            successor_index = index + 1
+            successor_depth = depth
+
+            # Update the successor agent's index and depth if it's pacman
+            if successor_index == gameState.getNumAgents():
+                successor_index = 0
+                successor_depth += 1
+
+            current = self.get_value(successor, successor_index, successor_depth)[0]
+
+            if current < min_val:
+                min_val = current
+                min_action = action
+
+        return min_val, min_action
+
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
