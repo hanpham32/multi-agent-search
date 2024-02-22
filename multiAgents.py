@@ -136,12 +136,10 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
-
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
     """
-
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
@@ -186,6 +184,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             else: beta = min(beta, bestAction[1])
 
         return bestAction
+
 
 
 
