@@ -85,6 +85,27 @@ def scoreEvaluationFunction(currentGameState):
     (not reflex agents).
     """
     return currentGameState.getScore()
+
+class MultiAgentSearchAgent(Agent):
+    """
+    This class provides some common elements to all of your
+    multi-agent searchers.  Any methods defined here will be available
+    to the MinimaxPacmanAgent, AlphaBetaPacmanAgent & ExpectimaxPacmanAgent.
+
+    You *do not* need to make any changes here, but you can if you want to
+    add functionality to all your adversarial search agents.  Please do not
+    remove anything, however.
+
+    Note: this is an abstract class: one that should not be instantiated.  It's
+    only partially specified, and designed to be extended.  Agent (game.py)
+    is another abstract class.
+    """
+
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
+        self.index = 0 # Pacman is always agent index 0
+        self.evaluationFunction = util.lookup(evalFn, globals())
+        self.depth = int(depth)
+
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
@@ -95,7 +116,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns the minimax action from the current gameState using self.depth
         and self.evaluationFunction.
 
-        Here are some method calls that might be useful when implementing minimax:
+        Here are some method calls that might be useful when implementing minimax.
 
         gameState.getLegalActions(agentIndex):
         Returns a list of legal actions for an agent
@@ -113,6 +134,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
+        "*** YOUR CODE HERE ***"
         result = self.get_value(gameState, 0, 0)
 
         # Return the action from result
@@ -174,7 +196,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             current = self.get_value(successor, successor_index, successor_depth)[0]
 
-            if current_val < min_val:
+            if current < min_val:
                 min_val = current
                 min_action = action
 
