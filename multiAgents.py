@@ -366,19 +366,19 @@ def betterEvaluationFunction(currentGameState):
     minFoodDistance = min(foodDistances) if foodDistances else 1
     foodFeature = 1.0 / minFoodDistance
 
-    # Non-scared ghosts distance
-    ghostDistances = [
-        manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates if ghost.scaredTimer == 0
-    ]
-    minGhostDistance = min(ghostDistances) if ghostDistances else 1
-    ghostFeature = -2.0 / minScaredGhostDistance if minScaredGhostDistance > 0 else 0
-
     # Scared ghosts distance
     scaredGhostDistances = [
         manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates if ghost.scaredTimer > 0
     ]
     minScaredGhostDistance = min(scaredGhostDistances) if scaredGhostDistances else 0
     scaredGhostFeature = 2.0 / minScaredGhostDistance if minScaredGhostDistance > 0 else 0
+
+    # Non-scared ghosts distance
+    ghostDistances = [
+        manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates if ghost.scaredTimer == 0
+    ]
+    minGhostDistance = min(ghostDistances) if ghostDistances else 1
+    ghostFeature = -2.0 / minGhostDistance if minGhostDistance > 0 else 0
 
     # Number of food pellets left
     foodCountFeature = -1.5 * currentGameState.getNumFood()
