@@ -198,7 +198,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             return self.get_min(gameState, index, depth)
 
     def get_max(self, gameState, index, depth):
- 
+
         legalMoves = gameState.getLegalActions(index)
         max_val = float("-inf")
         max_action = ""
@@ -222,7 +222,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return max_val, max_action
 
     def get_min(self, gameState, index, depth):
-        
+
         legalMoves = gameState.getLegalActions(index)
         min_val = float("inf")
         min_action = ""
@@ -250,6 +250,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
     """
+
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
@@ -269,35 +270,33 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return self.get_min(gameState, index, depth, alpha, beta)[1]
 
     def get_max(self, gameState, index, depth, alpha, beta):
-        bestAction = ("max",-float("inf"))
+        bestAction = ("max", -float("inf"))
         for action in gameState.getLegalActions(index):
-            successor = (action,self.alphabeta(gameState.generateSuccessor(index,action),
-                                      (depth + 1)%gameState.getNumAgents(),depth+1, alpha, beta))
-            bestAction = max(bestAction,successor,key=lambda x:x[1])
+            successor = (action, self.alphabeta(gameState.generateSuccessor(index, action),
+                                                (depth + 1) % gameState.getNumAgents(), depth + 1, alpha, beta))
+            bestAction = max(bestAction, successor, key=lambda x: x[1])
 
-            
-            if bestAction[1] > beta: 
+            if bestAction[1] > beta:
                 return bestAction
-            else: alpha = max(alpha,bestAction[1])
+            else:
+                alpha = max(alpha, bestAction[1])
 
         return bestAction
 
     def get_min(self, gameState, index, depth, alpha, beta):
-        bestAction = ("min",float("inf"))
+        bestAction = ("min", float("inf"))
         for action in gameState.getLegalActions(index):
-            successor = (action,self.alphabeta(gameState.generateSuccessor(index,action),
-                                      (depth + 1)%gameState.getNumAgents(),depth+1, alpha, beta))
-            bestAction = min(bestAction,successor,key=lambda x:x[1])
+            successor = (action, self.alphabeta(gameState.generateSuccessor(index, action),
+                                                (depth + 1) % gameState.getNumAgents(), depth + 1, alpha, beta))
+            bestAction = min(bestAction, successor, key=lambda x: x[1])
 
             # Prunning
-            if bestAction[1] < alpha: return bestAction
-            else: beta = min(beta, bestAction[1])
+            if bestAction[1] < alpha:
+                return bestAction
+            else:
+                beta = min(beta, bestAction[1])
 
         return bestAction
-
-
-
-
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -344,15 +343,47 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             avg += current_val * probability
         return (action, avg)
 
+
 def betterEvaluationFunction(currentGameState):
     """
+
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    newPos = currentGameState.getPacmanPosition()
+    newFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+
+    # Food distance
+    foodDistances = [manhattanDistance(newPos, food) for food in newFood.asList()]
+    minFoodDistance = min(foodDistances) if foodDistances else 1
+    foodFeature = 1.0 / minFoodDistance
+
+    # Scared ghosts distance
+    scaredGhostDistances = [
+        manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates if ghost.scaredTimer > 0
+    ]
+    minScaredGhostDistance = min(scaredGhostDistances) if scaredGhostDistances else 0
+    scaredGhostFeature = 2.0 / minScaredGhostDistance if minScaredGhostDistance > 0 else 0
+
+    # Non-scared ghosts distance
+    ghostDistances = [
+        manhattanDistance(newPos, ghost.getPosition()) for ghost in newGhostStates if ghost.scaredTimer == 0
+    ]
+    minGhostDistance = min(ghostDistances) if ghostDistances else 1
+    ghostFeature = -2.0 / minGhostDistance if minGhostDistance > 0 else 0
+
+    # Number of food pellets left
+    foodCountFeature = -1.5 * currentGameState.getNumFood()
+
+    score = currentGameState.getScore() + foodFeature + ghostFeature + \
+        scaredGhostFeature + foodCountFeature
+
+    return score
 
 
 # Abbreviation
