@@ -312,82 +312,36 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         All ghosts should be modeled as choosing uniformly at random from their
         legal moves.
         """
-        "*** YOUR CODE HERE ***"
-        action, score = self.get_value(game_state, 0, 0)
+        # calling expectimax with the depth we are going to investigate
+        Depth = self.depth * gameState.getNumAgents()
+        return self.expectimax(gameState, "expect", Depth, 0)[0]
 
-        # Return the action from result
-        return action
+    def expectimax(self, gameState, action, depth, index):
+        if depth == 0 or gameState.isLose() or gameState.isWin():
+            return (action, self.evaluationFunction(gameState))
 
-    def get_value(self, gameState, index, depth):
-
-        # if Terminal states return scores, action:
-        if gameState.isWin() or gameState.isLose() or depth == self.depth:
-            return gameState.getScore(), ""
-
-        # Max-agent: Pacman has index = 0
         if index == 0:
-            return self.get_max(gameState, index, depth)
-
-        # Min-agent: Ghost has index > 0
+            return self.get_max(gameState, action, depth, index)
         else:
-            return self.get_min(gameState, index, depth)
+            return self.expect_val(gameState, action, depth, index)
 
-    def get_max(self, gameState, index, depth):
- 
+    def get_max(self, gameState, action, depth, agentIndex):
+        bestAction = ("max", -(float('inf')))
+        for legalMove in gameState.getLegalActions(agentIndex):
+            successor = gameState.generateSuccessor(agentIndex, legalMove)
+            current_action, current_val = self.expectimax(successor, legalMove, depth - 1, (agentIndex + 1) % gameState.getNumAgents())
+            if current_val > bestAction[1]:
+                bestAction = (legalMove, current_val)
+        return bestAction
+
+    def expect_val(self, gameState, action, depth, index):
         legalMoves = gameState.getLegalActions(index)
-        max_val = float("-inf")
-        max_action = ""
-
-        for action in legalMoves:
-            successor = gameState.generateSuccessor(index, action)
-            successor_index = index + 1
-            successor_depth = depth
-
-            # Update the successor agent's index and depth if it's pacman
-            if successor_index == gameState.getNumAgents():
-                successor_index = 0
-                successor_depth += 1
-
-            current = self.get_value(successor, successor_index, successor_depth)[0]
-
-            if current > max_val:
-                max_val = current
-                max_action = action
-
-        return max_val, max_action
-
-    def get_min(self, gameState, index, depth):
-        
-        legalMoves = gameState.getLegalActions(index)
-        min_val = float("inf")
-        min_action = ""
-
-        for action in legalMoves:
-            successor = gameState.generateSuccessor(index, action)
-            successor_index = index + 1
-            successor_depth = depth
-
-            # Update the successor agent's index and depth if it's pacman
-            if successor_index == gameState.getNumAgents():
-                successor_index = 0
-                successor_depth += 1
-
-            current = self.get_value(successor, successor_index, successor_depth)[0]
-
-            if current < min_val:
-                min_val = current
-                min_action = action
-
-        return min_val, min_action
-    def expect_val(self, gameState, index, depth):
-        legalMoves = gameState.getLegalActions(agentIndex)
         avg = 0
-        propability = 1.0/len(legalMoves)
+        probability = 1.0 / len(legalMoves)
         for legalMove in legalMoves:
-            successor = (index + 1) % gameState.getNumAgents()
-            bestAction = self.expectimax(gameState.generateSuccessor(index, legalmoves),
-                                         action, depth - 1, successor)
-            avg += bestAction[1] * propability
+            successor = gameState.generateSuccessor(index, legalMove)
+            current_action, current_val = self.expectimax(successor, action, depth - 1, (index + 1) % gameState.getNumAgents())
+            avg += current_val * probability
         return (action, avg)
 
 def betterEvaluationFunction(currentGameState):
