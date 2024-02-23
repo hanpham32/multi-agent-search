@@ -116,7 +116,6 @@ class ReflexAgent(Agent):
         return score
 
 
-
 def scoreEvaluationFunction(currentGameState):
     """
     This default evaluation function just returns the score of the state.
@@ -199,7 +198,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             return self.get_min(gameState, index, depth)
 
     def get_max(self, gameState, index, depth):
- 
+
         legalMoves = gameState.getLegalActions(index)
         max_val = float("-inf")
         max_action = ""
@@ -223,7 +222,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return max_val, max_action
 
     def get_min(self, gameState, index, depth):
-        
+
         legalMoves = gameState.getLegalActions(index)
         min_val = float("inf")
         min_action = ""
@@ -247,11 +246,11 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return min_val, min_action
 
 
-
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
       Your minimax agent with alpha-beta pruning (question 3)
     """
+
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
@@ -271,36 +270,33 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return self.get_min(gameState, index, depth, alpha, beta)[1]
 
     def get_max(self, gameState, index, depth, alpha, beta):
-        bestAction = ("max",-float("inf"))
+        bestAction = ("max", -float("inf"))
         for action in gameState.getLegalActions(index):
-            successor = (action,self.alphabeta(gameState.generateSuccessor(index,action),
-                                      (depth + 1)%gameState.getNumAgents(),depth+1, alpha, beta))
-            bestAction = max(bestAction,successor,key=lambda x:x[1])
+            successor = (action, self.alphabeta(gameState.generateSuccessor(index, action),
+                                                (depth + 1) % gameState.getNumAgents(), depth + 1, alpha, beta))
+            bestAction = max(bestAction, successor, key=lambda x: x[1])
 
-            
-            if bestAction[1] > beta: 
+            if bestAction[1] > beta:
                 return bestAction
-            else: alpha = max(alpha,bestAction[1])
+            else:
+                alpha = max(alpha, bestAction[1])
 
         return bestAction
 
     def get_min(self, gameState, index, depth, alpha, beta):
-        bestAction = ("min",float("inf"))
+        bestAction = ("min", float("inf"))
         for action in gameState.getLegalActions(index):
-            successor = (action,self.alphabeta(gameState.generateSuccessor(index,action),
-                                      (depth + 1)%gameState.getNumAgents(),depth+1, alpha, beta))
-            bestAction = min(bestAction,successor,key=lambda x:x[1])
+            successor = (action, self.alphabeta(gameState.generateSuccessor(index, action),
+                                                (depth + 1) % gameState.getNumAgents(), depth + 1, alpha, beta))
+            bestAction = min(bestAction, successor, key=lambda x: x[1])
 
             # Prunning
-            if bestAction[1] < alpha: return bestAction
-            else: beta = min(beta, bestAction[1])
+            if bestAction[1] < alpha:
+                return bestAction
+            else:
+                beta = min(beta, bestAction[1])
 
         return bestAction
-
-
-
-
-
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
@@ -347,8 +343,10 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             avg += current_val * probability
         return (action, avg)
 
+
 def betterEvaluationFunction(currentGameState):
     """
+
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
@@ -359,7 +357,6 @@ def betterEvaluationFunction(currentGameState):
     newPos = currentGameState.getPacmanPosition()
     newFood = currentGameState.getFood()
     newGhostStates = currentGameState.getGhostStates()
-    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
     # Food distance
     foodDistances = [manhattanDistance(newPos, food) for food in newFood.asList()]
@@ -383,12 +380,10 @@ def betterEvaluationFunction(currentGameState):
     # Number of food pellets left
     foodCountFeature = -1.5 * currentGameState.getNumFood()
 
-    score = currentGameState.getScore() + foodFeature + ghostFeature + scaredGhostFeature + foodCountFeature
+    score = currentGameState.getScore() + foodFeature + ghostFeature + \
+        scaredGhostFeature + foodCountFeature
 
     return score
-
-    # util.raiseNotDefined()
-
 
 
 # Abbreviation
