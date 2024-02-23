@@ -185,18 +185,18 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     def get_value(self, gameState, index, depth):
 
-        # if Terminal states return scores, action:
+        # if Terminal states --> return scores, action
         if gameState.isWin() or gameState.isLose() or depth == self.depth:
             return gameState.getScore(), ""
 
-        # Max-agent: Pacman has index = 0
+        # Max Agent: Pacman has index = 0
         if index == 0:
             return self.get_max(gameState, index, depth)
 
-        # Min-agent: Ghost has index > 0
+        # Min Agent: Ghost has index > 0
         else:
             return self.get_min(gameState, index, depth)
-
+    # Max Agent
     def get_max(self, gameState, index, depth):
 
         legalMoves = gameState.getLegalActions(index)
@@ -220,7 +220,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 max_action = action
 
         return max_val, max_action
-
+    # Min Agent
     def get_min(self, gameState, index, depth):
 
         legalMoves = gameState.getLegalActions(index)
@@ -259,7 +259,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         result = self.get_max(gameState, 0, 0, -float("inf"), float("inf"))[0]
 
         return result
-
+    # get value
     def alphabeta(self, gameState, index, depth, alpha, beta):
         if depth is self.depth * gameState.getNumAgents() \
                 or gameState.isLose() or gameState.isWin():
@@ -268,7 +268,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             return self.get_max(gameState, index, depth, alpha, beta)[1]
         else:
             return self.get_min(gameState, index, depth, alpha, beta)[1]
-
+    #Maxiumizer
     def get_max(self, gameState, index, depth, alpha, beta):
         bestAction = ("max", -float("inf"))
         for action in gameState.getLegalActions(index):
@@ -282,7 +282,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 alpha = max(alpha, bestAction[1])
 
         return bestAction
-
+    #Minimizer
     def get_min(self, gameState, index, depth, alpha, beta):
         bestAction = ("min", float("inf"))
         for action in gameState.getLegalActions(index):
@@ -314,7 +314,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         # calling expectimax with the depth we are going to investigate
         Depth = self.depth * gameState.getNumAgents()
         return self.expectimax(gameState, "expect", Depth, 0)[0]
-
+        #Computes the action to take using the expectimax algorithm.
     def expectimax(self, gameState, action, depth, index):
         if depth == 0 or gameState.isLose() or gameState.isWin():
             return (action, self.evaluationFunction(gameState))
@@ -323,7 +323,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             return self.get_max(gameState, action, depth, index)
         else:
             return self.expect_val(gameState, action, depth, index)
-
+    #maxumizer
     def get_max(self, gameState, action, depth, agentIndex):
         bestAction = ("max", -(float('inf')))
         for legalMove in gameState.getLegalActions(agentIndex):
@@ -332,7 +332,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if current_val > bestAction[1]:
                 bestAction = (legalMove, current_val)
         return bestAction
-
+    #minimizer
     def expect_val(self, gameState, action, depth, index):
         legalMoves = gameState.getLegalActions(index)
         avg = 0
